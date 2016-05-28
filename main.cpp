@@ -82,6 +82,13 @@ int main(int argc, char** argv)
 
   load_ne_models();
   
+  /*Added By Ivania*/
+  std::fstream fs;
+  const char* ofile = (ifilename + ".output").c_str();
+  fs.open(ofile, std::fstream::in | std::fstream::out | std::fstream::app);
+
+  /*Added By Ivania*/
+  
   string line;
   int n = 1;
   while (getline(*is, line)) {
@@ -91,6 +98,9 @@ int main(int argc, char** argv)
     }
     string postagged = bidir_postag(line, vme, vme_chunking, dont_tokenize);
     cout << postagged << endl;
+    /*Added By Ivania*/
+    fs << postagged << endl;
+    /*Added By Ivania*/
     n++;
   }
   
