@@ -42,7 +42,7 @@ tokenize(const string & s1, list<string> & lt)
     }
     break;
   }
-  if (s[pos] == '.' && !(pos > 0 && s[pos-1] == '.')) s.replace(pos, 1, " .");
+  if (pos >= 0 && s[pos] == '.' && !(pos > 0 && s[pos-1] == '.')) s.replace(pos, 1, " .");
   
   replace(s, "?", " ? ");
   replace(s, "!", " ! ");

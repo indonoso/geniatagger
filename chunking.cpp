@@ -59,28 +59,33 @@ mesample(const vector<Token> &vt, int pos,
   p[4] = "EOS2";
   if (pos < (int)vt.size()-2) p[4] = vt[pos+2].pos;
   
-  char buf[1000];
+  std::stringstream buf;
   // first-order 
   for (int i = 0; i < 5; i++) {
-    sprintf(buf, "W%d_%s", i-2, w[i].c_str());
-    sample.features.push_back(buf);
-    sprintf(buf, "P%d_%s", i-2, p[i].c_str());
-    sample.features.push_back(buf);
+    buf << "W" << (i - 2) << "_" << w[i];
+    sample.features.push_back(buf.str());
+    buf.str("");
+    buf << "P" << (i - 2) << "_" << p[i];
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
   // bigram
   for (int i = 0; i < 4; i++) {
     int j = i + 1;
-    sprintf(buf, "P%dP%d_%s_%s", i-2, j-2, p[i].c_str(), p[j].c_str());
-    sample.features.push_back(buf);
-    sprintf(buf, "W%dW%d_%s_%s", i-2, j-2, w[i].c_str(), w[j].c_str());
-    sample.features.push_back(buf);
+    buf << "P" << (i - 2) << "P" << (j - 2) << "_" << p[i] << "_" << p[j];
+    sample.features.push_back(buf.str());
+    buf.str("");
+    buf << "W" << (i - 2) << "W" << (j - 2) << "_" << w[i] << "_" << w[j];
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
   // pos trigram
   for (int i = 0; i < 3; i++) {
     int j = i + 1;
     int k = i + 2;
-    sprintf(buf, "P%dP%dP%d_%s_%s_%s", i-2, j-2, k-2, p[i].c_str(), p[j].c_str(), p[k].c_str());
-    sample.features.push_back(buf);
+    buf << "P" << (i - 2) << "P" << (j - 2) << "P" << (k - 2) << "_" << p[i] << "_" << p[j] << "_" << p[k];
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
   
   t[0] = tag_left2;
@@ -92,8 +97,9 @@ mesample(const vector<Token> &vt, int pos,
   for (int i = 0; i < 5; i++) {
     //  for (int i = 1; i < 4; i++) {
     if (t[i] == "") continue;
-    sprintf(buf, "T%d_%s", i-2, t[i].c_str());
-    sample.features.push_back(buf);
+    buf << "T" << (i - 2) << "_" << t[i];
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
 
   // second-order
@@ -101,21 +107,25 @@ mesample(const vector<Token> &vt, int pos,
     int j = i + 1;
     if (t[i] == "") continue;
     if (t[j] == "") continue;
-    sprintf(buf, "T%dT%d_%s_%s", i-2, j-2, t[i].c_str(), t[j].c_str());
-    sample.features.push_back(buf);
+    buf << "T" << (i - 2) << "T" << (j - 2) << "_" << t[i] << "_" << t[j];
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
 
   if (t[1] != "" && t[3] != "") {
-    sprintf(buf, "T%dT%d_%s_%s", 1-2, 3-2, t[1].c_str(), t[3].c_str());
-    sample.features.push_back(buf);
+    buf << "T" << (1 - 2) << "T" << (3 - 2) << "_" << t[1] << "_" << t[3];
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
   if (t[0] != "" && t[1] != "" && t[3] != "") {
-    sprintf(buf, "T%dT%dT%d_%s_%s_%s", 0-2, 1-2, 3-2, t[0].c_str(), t[1].c_str(), t[3].c_str());
-    sample.features.push_back(buf);
+    buf << "T" << (0 - 2) << "T" << (1 - 2) << "T" << (3 - 2) << "_" << t[0] << "_" << t[1] << "_" << t[3]; 
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
   if (t[1] != "" && t[3] != "" && t[4] != "") {
-    sprintf(buf, "T%dT%dT%d_%s_%s_%s", 1-2, 3-2, 4-2, t[1].c_str(), t[3].c_str(), t[4].c_str());
-    sample.features.push_back(buf);
+    buf << "T" << (1 - 2) << "T" << (3 - 2) << "T" << (4 - 2) << "_" << t[1] << "_" << t[3] << "_" << t[4]; 
+    sample.features.push_back(buf.str());
+    buf.str("");
   }
 
   

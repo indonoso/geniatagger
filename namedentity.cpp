@@ -41,7 +41,7 @@ struct WordInfo
   double edge_prob() const {
     return ( edge_ne + 1.0 ) / ( total + 2.0 );
   }
-  bool operator<(const WordInfo & x) {
+  bool operator<(const WordInfo & x) const {
     //    return this->out_prob() > x.out_prob();
     return this->edge_prob() > x.edge_prob();
   }
@@ -99,9 +99,6 @@ static ME_Sample mesample(const string & label, const vector<Token> &vt, int beg
 
   mes.label = label;
 
-  const int BUFLEN = 1000;
-  char buf[BUFLEN];
-
   string s;
 
   // contextual feature
@@ -109,14 +106,12 @@ static ME_Sample mesample(const string & label, const vector<Token> &vt, int beg
   //  if (begin >= 1) s_1 = vt[begin-1].str;
   if (begin >= 1) s_1 = normalize(vt[begin-1].str);
   else            s_1 = "BOS";
-  sprintf(buf, "C-1_%s", s_1.c_str());
-  mes.features.push_back(buf);
+  mes.features.push_back("C-1_" + s_1);
 
   //  if (end < vt.size()) s1 = vt[end].str;
   if (end < vt.size()) s1 = normalize(vt[end].str);
   else                 s1 = "EOS";
-  sprintf(buf, "C+1_%s", s1.c_str());
-  mes.features.push_back(buf);
+  mes.features.push_back("C+1_" + s1);
 
   //  if (begin >= 2) s_2 = vt[begin-2].str;
   if (begin >= 2) s_2 = normalize(vt[begin-2].str);
@@ -142,19 +137,16 @@ static ME_Sample mesample(const string & label, const vector<Token> &vt, int beg
   //  }
   
   string tb = normalize(vt[begin].str);
-  sprintf(buf, "TB_%s", tb.c_str());
-  mes.features.push_back(buf);
+  mes.features.push_back("TB_" + tb);
   
   for (int i = begin + 1; i < end-1; i++) {
   //for (int i = begin; i < end; i++) {
     s = normalize(vt[i].str);
-    sprintf(buf, "TM_%s", s.c_str());
-    mes.features.push_back(buf);
+    mes.features.push_back("TM_" + s);
   }
 
   string te = normalize(vt[end-1].str);
-  sprintf(buf, "TE_%s", te.c_str());
-  mes.features.push_back(buf);
+  mes.features.push_back("TE_" + te);
 
   
   // combination
@@ -173,13 +165,11 @@ static ME_Sample mesample(const string & label, const vector<Token> &vt, int beg
   string whole = "";
   bool contain_comma = false;
   for (int i = begin; i < end; i++) {
-    if (s.size() + vt[i].str.size() > BUFLEN-100) break;
     s += normalize(vt[i].str);
     whole += vt[i].str;
   }
-  sprintf(buf, "WHOLE_%s", s.c_str());
   //if (label > 0) mes.features.push_back(buf);
-  mes.features.push_back(buf);
+  mes.features.push_back("WHOLE_" + s);
   mes.features.push_back("WS1_" + wordshape(whole, true));
   mes.features.push_back("WS2_" + wordshape(whole, false));
 
@@ -188,14 +178,16 @@ static ME_Sample mesample(const string & label, const vector<Token> &vt, int beg
 
   // preffix and suffix
   for (int j = 1; j <= 10; j++) {
-    char buf[1000];
+    stringstream buf;
     if (s.size() >= j) {
-      sprintf(buf, "SUF%d_%s", j, s.substr(s.size() - j).c_str());
-      mes.add_feature(buf);
+      buf << "SUF" << j << "_" << s.substr(s.size() - j);
+      mes.add_feature(buf.str());
+      buf.str("");
     }
     if (s.size() >= j) {
-      sprintf(buf, "PRE%d_%s", j, s.substr(0, j).c_str());
-      mes.add_feature(buf);
+      buf << "PRE" << j << "_" << s.substr(0, j);
+      mes.add_feature(buf.str());
+      buf.str("");
     }
   }
 
@@ -304,7 +296,7 @@ struct Annotation
   int begin;
   int end;
   double prob;
-  bool operator<(const Annotation & x) { return prob > x.prob; }
+  bool operator<(const Annotation & x) const { return prob > x.prob; }
   Annotation(const int l, const int b, const int e, const double p) :
     label(l), begin(b), end(e), prob(p) {}
 };
@@ -401,6 +393,6 @@ int netagging(vector<Token> & vt)
   find_NEs(ne_model, vt);
 
   
-  
+  return 0;
 }
 

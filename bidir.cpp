@@ -58,15 +58,22 @@ mesample(const vector<Token> &vt, int i,
     sample.features.push_back("W0+1_" + str  + "_" + poststr);
   }
 
+  stringstream buf;
   for (int j = 1; j <= 10; j++) {
-    char buf[1000];
+    //    char buf[1000];
     if (str.size() >= j) {
-      sprintf(buf, "suf%d_%s", j, str.substr(str.size() - j).c_str());
-      sample.features.push_back(buf);
+      //      sprintf(buf, "suf%d_%s", j, str.substr(str.size() - j).c_str());
+      //      sample.features.push_back(buf);
+      buf << "suf" << j << "_" << str.substr(str.size() - j);
+      sample.features.push_back(buf.str());
+      buf.str("");
     }
     if (str.size() >= j) {
-      sprintf(buf, "pre%d_%s", j, str.substr(0, j).c_str());
-      sample.features.push_back(buf);
+      //      sprintf(buf, "pre%d_%s", j, str.substr(0, j).c_str());
+      //      sample.features.push_back(buf);
+      buf << "pre" << j << "_" << str.substr(0, j);
+      sample.features.push_back(buf.str());
+      buf.str("");
     }
   }
   // L
