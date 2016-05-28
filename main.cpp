@@ -84,9 +84,9 @@ int main(int argc, char** argv)
   
   /*Added By Ivania*/
   std::fstream fs;
-  const char* ofile = (ifilename + ".output").c_str();
-  fs.open(ofile, std::fstream::in | std::fstream::out | std::fstream::app);
-
+  ofilename = ifilename + ".output";
+  const char* ofile = ofilename.c_str();
+  fs.open(ofile, std::fstream::out | std::fstream::app);
   /*Added By Ivania*/
   
   string line;
