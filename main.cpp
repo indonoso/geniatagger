@@ -123,7 +123,6 @@ int main(int argc, char** argv)
     cout << postagged << endl;
     //Added By Ivania
     fs << postagged << endl;
-    cout << getexepath() << endl;
     //Added By Ivania
     n++;
   }
