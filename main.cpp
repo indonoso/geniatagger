@@ -120,7 +120,7 @@ int main(int argc, char** argv)
       cerr << " (please note that the input should be one-sentence-per-line)." << endl;
     }
     string postagged = bidir_postag(line, vme, vme_chunking, dont_tokenize);
-    cout << postagged << endl;
+    // cout << postagged << endl;
     //Added By Ivania
     fs << postagged << endl;
     //Added By Ivania
