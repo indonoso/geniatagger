@@ -374,10 +374,10 @@ void find_NEs(const ME_Model & me,
 
 ME_Model ne_model;
 
-void load_ne_models()
+void load_ne_models(string path)
 {
-  string model_file = "./models_named_entity/model001";
-  string wordinfo_file = "./models_named_entity/word_info";
+  string model_file = path + "/models_named_entity/model001";
+  string wordinfo_file = path + "/models_named_entity/word_info";
 
   cerr << "loading named_entity_models.";
   ne_model.load_from_file(model_file);

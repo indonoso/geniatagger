@@ -12,10 +12,32 @@
 #include "common.h"
 
 using namespace std;
+#include <string>
+#include <limits.h>
+#include <unistd.h>
+
+// Added By Ivania
+// http://www.cplusplus.com/reference/string/string/find_last_of/
+string SplitFilename (const std::string& str)
+{
+  std::size_t found = str.find_last_of("/\\");
+  return str.substr(0,found);
+}
+
+// http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
+string getexepath()
+{
+  char result[ PATH_MAX ];
+  ssize_t count = readlink( "/proc/self/exe", result, PATH_MAX );
+  std::string path = string( result, (count > 0) ? count : 0 );
+  path = SplitFilename(path);
+  return path;
+}
+// Added By Ivania
 
 string bidir_postag(const string & s, const vector<ME_Model> & vme, const vector<ME_Model> & cvme, bool dont_tokenize);
 void bidir_chunking(vector<Sentence> & vs, const vector<ME_Model> & vme);
-void init_morphdic();
+void init_morphdic(string path);
 
 void help()
 {
@@ -35,7 +57,7 @@ void version()
   cout << "GENIA Tagger 3.0" << endl << endl;
 }
 
-extern void load_ne_models();
+extern void load_ne_models(string path);
 
 int main(int argc, char** argv)
 {
@@ -56,15 +78,15 @@ int main(int argc, char** argv)
     if (!ifile) { cerr << "error: cannot open " << ifilename << endl; exit(1); }
     is = &ifile;
   }
-                                                                      
-  init_morphdic();
+
+  init_morphdic(getexepath());
 
   vector<ME_Model> vme(16);
-
+  string name = getexepath() + "/models_medline/model.bidir.";
   cerr << "loading pos_models";
   for (int i = 0; i < 16; i++) {
     char buf[1000];
-    sprintf(buf, "./models_medline/model.bidir.%d", i);
+    int n = sprintf(buf, "%s%d", name.c_str(), i);
     vme[i].load_from_file(buf);
     cerr << ".";
   }
@@ -72,22 +94,23 @@ int main(int argc, char** argv)
 
   cerr << "loading chunk_models";
   vector<ME_Model> vme_chunking(16);
+  name = getexepath() + "/models_chunking/model.bidir.";
   for (int i = 0; i < 8; i +=2 ) {
     char buf[1000];
-    sprintf(buf, "./models_chunking/model.bidir.%d", i);
+    sprintf(buf, "%s%d", name.c_str(), i);
     vme_chunking[i].load_from_file(buf);
     cerr << ".";
   }
   cerr << "done." << endl;
 
-  load_ne_models();
+  load_ne_models(getexepath());
   
-  /*Added By Ivania*/
+  //Added By Ivania
   std::fstream fs;
   ofilename = ifilename + ".output";
   const char* ofile = ofilename.c_str();
   fs.open(ofile, std::fstream::out | std::fstream::app);
-  /*Added By Ivania*/
+  //Added By Ivania
   
   string line;
   int n = 1;
@@ -98,9 +121,10 @@ int main(int argc, char** argv)
     }
     string postagged = bidir_postag(line, vme, vme_chunking, dont_tokenize);
     cout << postagged << endl;
-    /*Added By Ivania*/
+    //Added By Ivania
     fs << postagged << endl;
-    /*Added By Ivania*/
+    cout << getexepath() << endl;
+    //Added By Ivania
     n++;
   }
   
