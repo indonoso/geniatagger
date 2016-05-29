@@ -119,10 +119,15 @@ int main(int argc, char** argv)
       cerr << "warning: the sentence seems to be too long at line " << n;
       cerr << " (please note that the input should be one-sentence-per-line)." << endl;
     }
-    string postagged = bidir_postag(line, vme, vme_chunking, dont_tokenize);
-    // cout << postagged << endl;
     //Added By Ivania
-    fs << postagged << endl;
+    if (line.compare("**end_of_document**") != 0){
+        string postagged = bidir_postag(line, vme, vme_chunking, dont_tokenize);
+        fs << postagged << endl;
+    }
+    else{
+        fs << line << endl;
+    }
+    // cout << postagged << endl;
     //Added By Ivania
     n++;
   }
