@@ -120,7 +120,7 @@ int main(int argc, char** argv)
       cerr << " (please note that the input should be one-sentence-per-line)." << endl;
     }
     //Added By Ivania
-    if (line.compare("**end_of_document**") != 0){
+    if (line.compare("**end_of_document**") != 0 && line.compare("**title**") !=0 ){
         string postagged = bidir_postag(line, vme, vme_chunking, dont_tokenize);
         fs << postagged << endl;
     }
